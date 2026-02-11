@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สำหรับเธอ </title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Prompt', sans-serif;
+}
+
+body{
+  height:100vh;
+  background:linear-gradient(180deg,#fff0f6,#ffe4ec);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+/* 🌸 ดอกไม้ */
+.flower{
+  width:160px;
+  animation:float 4s ease-in-out infinite;
+  cursor:pointer;
+}
+
+@keyframes float{
+  0%,100%{ transform:translateY(0);}
+  50%{ transform:translateY(-18px);}
+}
+
+/* 💌 overlay */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(255,228,236,0.85);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  pointer-events:none;
+  transition:0.4s ease;
+}
+
+.overlay.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* 💎 การ์ด */
+.card{
+  width:30%;
+  max-width:340px;
+  background:rgba(255,255,255,0.96);
+  border-radius:0px;
+  padding:22px 20px 26px;
+  box-shadow:0 20px 60px rgba(255,120,170,0.25);
+  text-align:center;
+
+  transform:scale(0.9);
+  opacity:0;
+  transition:0.4s ease;
+}
+
+.overlay.show .card{
+  transform:scale(1);
+  opacity:1;
+}
+
+/* 📸 รูป */
+.card img{
+  width:100%;
+  border-radius:0px;
+  margin-bottom:0px;
+}
+
+/* ✨ ข้อความ */
+.text{
+  font-family:'Sarabun', sans-serif;
+  font-size:19px;
+  line-height:1.7;
+  color:#ff4f8b;
+  min-height:70px;
+}
+
+/* 🔘 ปุ่มล่าง */
+.bottom-btn{
+  display:inline-block;
+  margin-top:20px;
+  padding:10px 28px;
+  border-radius:22px;
+  background:#ff6fa5;
+  color:white;
+  font-size:14px;
+  cursor:pointer;
+
+  opacity:0;
+  transform:translateY(12px);
+  pointer-events:none;
+  transition:0.4s ease;
+}
+
+.bottom-btn.show{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+.bottom-btn:hover{
+  background:#ff4f8b;
+}
+
+/* 💖 container */
+.hearts{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+
+/* 💗 หัวใจแต่ละดวง */
+.heart{
+  position:absolute;
+  bottom:-20px;
+  font-size:18px;
+  opacity:0.6;
+  animation: floatUp 6s linear forwards;
+}
+
+@keyframes floatUp{
+  0%{
+    transform: translateY(0) scale(1);
+    opacity:0.6;
+  }
+  100%{
+    transform: translateY(-110vh) scale(1.4);
+    opacity:0;
+  }
+}
+
+
+/* 📱 Tablet+ */
+@media(min-width:768px){
+  .flower{ width:200px; }
+  .card{ max-width:380px; }
+  .text{ font-size:15px; }
+}
+</style>
+</head>
+
+<body>
+
+<img src="img/flower.png" class="flower" onclick="openCard()">
+
+<div class="overlay" id="overlay">
+  <div class="card">
+    <img src="img/couple.png">
+    <div class="text" id="text"></div>
+
+    <div class="bottom-btn" id="closeBtn" onclick="closeCard()">
+      ปิด
+    </div>
+  </div>
+</div>
+
+<div class="hearts" id="hearts"></div>
+
+
+<script>const message = `วาเลนไทน์ปีที่ 3 ของเราแล้วนะ 
+
+สามปีที่ผ่านมาอาจมีทั้งวันที่หัวเราะดัง ๆ และวันที่เงียบงันบ้าง 
+แต่ทุกช่วงเวลาที่มีเธออยู่ข้าง ๆ มันอบอุ่นและพิเศษเสมอ
+
+ขอบคุณที่ยังจับมือกันอยู่ตรงนี้ ขอบคุณที่ไม่ปล่อยกันไปไหน 
+ `;
+
+let i = 0;
+let typingTimeout;
+
+const overlay = document.getElementById('overlay');
+const textEl = document.getElementById('text');
+const closeBtn = document.getElementById('closeBtn');
+let heartInterval;
+
+function openCard(){
+  overlay.classList.add('show');
+  resetCard();
+  typeText();
+  startHearts();   // เริ่มหัวใจ
+}
+
+function closeCard(){
+  overlay.classList.remove('show');
+  clearTimeout(typingTimeout);
+  resetCard();
+  stopHearts();    // หยุดหัวใจ
+}
+
+
+function resetCard(){
+  textEl.innerHTML = "";
+  i = 0;
+  closeBtn.classList.remove('show');
+}
+
+function typeText(){
+  if(i < message.length){
+    textEl.innerHTML += message.charAt(i);
+    i++;
+    typingTimeout = setTimeout(typeText, 80);
+  }else{
+    closeBtn.classList.add('show');
+  }
+}
+
+function createHeart(){
+  const heart = document.createElement("div");
+  heart.classList.add("heart");
+  heart.innerHTML = "🩷";
+
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.fontSize = (14 + Math.random() * 12) + "px";
+  heart.style.animationDuration = (4 + Math.random() * 3) + "s";
+
+  document.getElementById("hearts").appendChild(heart);
+
+  setTimeout(() => {
+    heart.remove();
+  }, 7000);
+}
+
+function startHearts(){
+  heartInterval = setInterval(createHeart, 600);
+}
+
+function stopHearts(){
+  clearInterval(heartInterval);
+}
+
+</script>
+
+
+
+</body>
+</html>
